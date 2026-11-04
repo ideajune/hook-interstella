@@ -5,18 +5,36 @@ import { Footer } from "@/components/Footer";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hook-interstellar.vercel.app"),
   title: {
     default: "HOOK INTERSTELLAR | 새로운 우주 시대, 우리만의 항로를 개척하다",
     template: "%s | HOOK INTERSTELLAR",
   },
   description:
-    "HOOK INTERSTELLAR 공식 웹사이트. 우주 기술, 우주 생존 솔루션, 인재·교육 커뮤니티, 지식재산(IP) 개발 및 SPACE IDEAS 오픈 이노베이션 플랫폼.",
+    "후크인터스텔라(주) 공식 웹사이트. 우주·고고도 접근 기술, 극한환경 생존 솔루션, 인재·교육 커뮤니티 및 SPACE IDEAS 오픈 이노베이션 플랫폼.",
   openGraph: {
-    title: "HOOK INTERSTELLAR — Beyond the Horizon",
+    title: "HOOK INTERSTELLAR | 새로운 우주 시대, 우리만의 항로를 개척하다",
     description:
-      "새로운 우주 시대, 우리만의 항로를 개척하다. 5대 우주산업 비즈니스 영역과 SPACE IDEAS 참여 플랫폼.",
+      "우주·고고도 접근 기술, 극한환경 생존 솔루션, 인재·교육 및 SPACE IDEAS 오픈 이노베이션 플랫폼",
+    url: "https://hook-interstellar.vercel.app",
+    siteName: "HOOK INTERSTELLAR",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "HOOK INTERSTELLAR — 새로운 우주 시대, 우리만의 항로를 개척하다.",
+      },
+    ],
     type: "website",
     locale: "ko_KR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HOOK INTERSTELLAR | 새로운 우주 시대, 우리만의 항로를 개척하다",
+    description:
+      "우주·고고도 접근 기술, 극한환경 생존 솔루션, 인재·교육 및 SPACE IDEAS 오픈 이노베이션 플랫폼",
+    images: ["/images/og-image.png"],
   },
 };
 
