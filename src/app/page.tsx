@@ -44,7 +44,7 @@ export default function HomePage() {
       <section className="relative bg-[#07182D] text-white overflow-hidden">
         {/* High-resolution NASA orbital horizon & spacecraft module photograph (original vivid brightness) */}
         <div
-          className="absolute inset-0 bg-cover bg-center hero-bg-kenburns"
+          className="absolute inset-0 bg-cover hero-bg-kenburns"
           style={{
             backgroundImage: "url('/images/hero-space.jpg')",
           }}
