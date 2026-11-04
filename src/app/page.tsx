@@ -44,7 +44,7 @@ export default function HomePage() {
       <section className="relative bg-[#07182D] text-white overflow-hidden">
         {/* High-resolution NASA orbital horizon & spacecraft module photograph (original vivid brightness) */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center hero-bg-kenburns"
           style={{
             backgroundImage: "url('/images/hero-space.jpg')",
           }}
@@ -168,7 +168,7 @@ export default function HomePage() {
               <h2 className="text-3xl sm:text-4xl font-bold text-[#17212B] leading-tight">
                 거대 자본의 독점을 넘어,
                 <br />
-                기민한 기술과 열린 연대로 우주를 준비합니다
+                유연한 기술과 열린 연대로 우주를 열어갑니다.
               </h2>
               <p className="text-base sm:text-lg text-[#5D6B78] leading-relaxed">
                 오늘날 우주 탐사와 관련 산업은 여전히 막대한 비용과 높은 진입장벽에
