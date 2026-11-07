@@ -227,6 +227,158 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 2-B. SPACE STOWAWAY PROJECT */}
+      <section className="py-20 lg:py-24 bg-[#07182D] text-white border-b border-[#123454] relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 85% 60% at 75% 110%, rgba(20, 127, 197, 0.26) 0%, rgba(11, 35, 64, 0.45) 48%, rgba(7, 24, 45, 0.98) 85%)",
+          }}
+        />
+        <div className="container-shell relative">
+          <div className="rounded-2xl bg-[#0B2340] border border-[#123454] p-8 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <div className="lg:col-span-7 space-y-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#2998D6]">
+                  SPACE STOWAWAY PROJECT
+                </span>
+                <StatusBadge status="구상 단계" variant="dark" />
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-semibold text-[#D9E6F2]/85 tracking-wide">
+                  후크인터스텔라 우주밀항 프로젝트
+                </p>
+                <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-bold text-white leading-tight">
+                  도착보다 중요한 것은 항해다.
+                </h2>
+              </div>
+
+              <p className="text-base sm:text-lg text-[#D9E6F2]/90 leading-relaxed max-w-2xl">
+                개인의 존재를 상징하는 작은 캡슐을 우주로 보내기 위한 도전. 성공을
+                약속하기보다 시도를 지속하고, 그 모든 과정을 기록한다.
+              </p>
+
+              <p className="text-xs sm:text-sm text-[#D9E6F2]/70 leading-relaxed max-w-2xl">
+                모근을 포함한 머리카락 한 올을 담은 초소형 캡슐 실험 구상으로, 불확실한
+                발사 기한을 보장하는 대신 고고도 실증부터 단계적인 시도와 실패의 기록을
+                투명하게 축적합니다.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/projects/space-stowaway"
+                  className="px-6 py-3.5 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white font-semibold text-sm sm:text-base transition-colors inline-flex items-center gap-2 min-h-[48px]"
+                >
+                  <span>프로젝트 자세히 보기</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Link>
+                <Link
+                  href="/insights/space-stowaway-project-why-we-chose-voyage"
+                  className="px-5 py-3.5 rounded-lg border border-[#D9E6F2]/30 hover:bg-white/10 text-[#D9E6F2] hover:text-white font-semibold text-sm transition-colors inline-flex items-center gap-2 min-h-[48px]"
+                >
+                  <span>전자책 소개 아티클 보기</span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Premium Restrained Visual: Earth Horizon & Micro-Capsule */}
+            <div className="lg:col-span-5">
+              <div className="rounded-xl bg-[#07182D] border border-[#123454] p-6 space-y-4">
+                <div className="flex items-center justify-between text-[11px] text-[#D9E6F2]/75">
+                  <span className="font-semibold tracking-wider text-[#2998D6]">
+                    항해 개념도
+                  </span>
+                  <span>개념 구상 이미지</span>
+                </div>
+
+                <svg
+                  viewBox="0 0 360 200"
+                  className="w-full h-auto"
+                  role="img"
+                  aria-label="우주와 지구의 경계 곡면 위로 항해하는 소형 캡슐 개념 비주얼"
+                >
+                  <defs>
+                    <linearGradient id="homeHorizonGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#2998D6" stopOpacity="0.42" />
+                      <stop offset="45%" stopColor="#147FC5" stopOpacity="0.18" />
+                      <stop offset="100%" stopColor="#07182D" stopOpacity="0.95" />
+                    </linearGradient>
+                    <linearGradient id="homeCapsuleSurface" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="65%" stopColor="#D9E6F2" />
+                      <stop offset="100%" stopColor="#2998D6" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Atmospheric boundary arc */}
+                  <path
+                    d="M -30 200 Q 180 105 390 200 Z"
+                    fill="url(#homeHorizonGlow)"
+                  />
+                  <path
+                    d="M -30 200 Q 180 105 390 200"
+                    fill="none"
+                    stroke="#2998D6"
+                    strokeWidth="1.5"
+                    strokeOpacity="0.85"
+                  />
+                  <path
+                    d="M -30 184 Q 180 88 390 184"
+                    fill="none"
+                    stroke="#D9E6F2"
+                    strokeWidth="0.75"
+                    strokeOpacity="0.35"
+                    strokeDasharray="4 4"
+                  />
+
+                  {/* Trajectory path */}
+                  <path
+                    d="M 90 162 Q 165 96 245 48"
+                    fill="none"
+                    stroke="#2998D6"
+                    strokeWidth="1.75"
+                    strokeDasharray="5 4"
+                  />
+                  <circle cx="90" cy="162" r="3" fill="#D9E6F2" />
+                  <circle cx="166" cy="96" r="3" fill="#2998D6" />
+
+                  {/* Symbolic Micro-Capsule */}
+                  <g transform="translate(245, 48) rotate(-28)">
+                    <rect
+                      x="-16"
+                      y="-7.5"
+                      width="32"
+                      height="15"
+                      rx="7.5"
+                      fill="url(#homeCapsuleSurface)"
+                      stroke="#FFFFFF"
+                      strokeWidth="1"
+                    />
+                    <line
+                      x1="-2"
+                      y1="-7.5"
+                      x2="-2"
+                      y2="7.5"
+                      stroke="#07182D"
+                      strokeWidth="1.2"
+                    />
+                    <circle cx="6" cy="0" r="2.3" fill="#07182D" />
+                  </g>
+                </svg>
+
+                <div className="pt-3 border-t border-[#123454] flex items-center justify-between text-xs text-[#D9E6F2]/80">
+                  <span>상징적 페이로드: 모근 포함 머리카락 1올</span>
+                  <span className="text-[#2998D6] font-semibold">항해 일지 공개 원칙</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 3. BUSINESS PORTFOLIO (5 GROUPS) */}
       <section className="py-20 lg:py-28 bg-[#F8FAFC] border-b border-[#E5EAF0]">
         <div className="container-shell space-y-12">
@@ -338,8 +490,8 @@ export default function HomePage() {
                     <strong className="text-white">협력 필요 분야:</strong>{" "}
                     {tech.collaborationNeeds}
                   </p>
-                  <p className="text-[11px] text-[#D9E6F2]/60 italic">
-                    * {tech.conceptNote}
+                  <p className="text-[11px] text-[#D9E6F2]/60">
+                    {tech.conceptNote}
                   </p>
                 </div>
               </div>
@@ -533,9 +685,11 @@ export default function HomePage() {
                   <h3 className="text-lg font-bold text-[#17212B] group-hover:text-[#147FC5] transition-colors leading-snug">
                     {article.title}
                   </h3>
-                  <p className="text-sm text-[#5D6B78] line-clamp-3 leading-relaxed">
-                    {article.excerpt}
-                  </p>
+                  {article.excerpt && (
+                    <p className="text-sm text-[#5D6B78] line-clamp-3 leading-relaxed">
+                      {article.excerpt}
+                    </p>
+                  )}
                 </div>
                 <div className="pt-4 border-t border-[#E5EAF0] flex items-center justify-between text-xs font-semibold text-[#17212B] group-hover:text-[#147FC5]">
                   <span>아티클 전문 읽기</span>

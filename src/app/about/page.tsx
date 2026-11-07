@@ -130,7 +130,7 @@ export default function AboutPage() {
               MISSION
             </span>
             <h2 className="text-2xl sm:text-3xl font-bold leading-snug">
-              기민한 기술 실험, 실전 생존 솔루션, 그리고 동료들의 연대
+              유연한 기술 실험, 실전 생존 솔루션, 그리고 동료들의 연대
             </h2>
             <p className="text-sm sm:text-base text-[#D9E6F2]/85 leading-relaxed">
               고고도 실증 실험과 극한환경 생존 기술을 연구하고, 콘텐츠와 아이디어 광장을
@@ -161,7 +161,7 @@ export default function AboutPage() {
               {
                 icon: <Compass className="w-6 h-6 text-[#147FC5]" />,
                 title: "우리만의 항로 개척",
-                desc: "남들이 만든 무겁고 비싼 방식을 그대로 따라가기보다, 성층권 풍선 활용처럼 작고 기민하게 시도할 수 있는 현실적인 돌파구를 찾습니다.",
+                desc: "남들이 만든 무겁고 비싼 방식을 그대로 따라가기보다, 성층권 풍선 활용처럼 작고 유연하게 시도할 수 있는 현실적인 돌파구를 찾습니다.",
               },
               {
                 icon: <ShieldCheck className="w-6 h-6 text-[#147FC5]" />,
@@ -190,6 +190,52 @@ export default function AboutPage() {
                 <p className="text-sm text-[#5D6B78] leading-relaxed">{val.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OUR PHILOSOPHY */}
+      <section className="py-16 lg:py-24 bg-[#07182D] text-white border-b border-[#123454]">
+        <div className="container-shell">
+          <div className="rounded-2xl bg-[#0B2340] border border-[#123454] p-8 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="lg:col-span-7 space-y-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-[#2998D6]">
+                OUR PHILOSOPHY
+              </p>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">
+                우리는 도착보다 항해를 중요하게 생각합니다.
+              </h2>
+              <p className="text-base sm:text-lg text-[#D9E6F2]/90 leading-relaxed">
+                우주에는 아직 누구나 이용할 수 있는 표준 항로가 없습니다. 우리는 정해진
+                길을 기다리기보다 작은 가능성을 찾아 직접 시도합니다. 성공만을 약속하지
+                않습니다. 실패를 숨기지 않고 시도와 배움의 과정을 기록하며 다음 도전을
+                이어갑니다.
+              </p>
+              <div className="pt-2">
+                <Link
+                  href="/projects/space-stowaway"
+                  className="px-6 py-3.5 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm sm:text-base font-semibold transition-colors inline-flex items-center gap-2 min-h-[48px]"
+                >
+                  <span>SPACE STOWAWAY 프로젝트 자세히 보기</span>
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="rounded-xl bg-[#07182D] border border-[#2998D6]/40 p-7 sm:p-8 space-y-4">
+                <span className="text-xs font-semibold tracking-wider text-[#2998D6]">
+                  우리의 약속
+                </span>
+                <blockquote className="text-xl sm:text-2xl font-bold text-white leading-snug">
+                  &ldquo;도달할 때까지 시도를 멈추지 않는다.&rdquo;
+                </blockquote>
+                <p className="text-xs sm:text-sm text-[#D9E6F2]/75 leading-relaxed pt-2 border-t border-[#123454]">
+                  불확실한 발사 시점이나 결과를 섣불리 보장하기보다, 시도를 지속하는
+                  태도와 투명한 항해 일지를 정직한 약속으로 삼습니다.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

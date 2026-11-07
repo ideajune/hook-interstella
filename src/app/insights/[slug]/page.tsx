@@ -2,7 +2,7 @@ import React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { readDb } from "@/lib/db";
-import { ArrowLeft, Calendar, ExternalLink, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, ExternalLink, User } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -69,31 +69,94 @@ export default async function InsightDetailPage({
       {/* Article Body */}
       <section className="py-14 lg:py-20 bg-white border-b border-[#E5EAF0]">
         <div className="container-shell max-w-3xl space-y-8">
-          <div className="p-6 rounded-xl bg-[#F8FAFC] border border-[#E5EAF0] text-base font-medium text-[#17212B] leading-relaxed">
-            {article.excerpt}
+          {article.excerpt && (
+            <div className="p-6 rounded-xl bg-[#F8FAFC] border border-[#E5EAF0] text-base font-medium text-[#17212B] leading-relaxed">
+              {article.excerpt}
+            </div>
+          )}
+
+          <div className="space-y-5 text-base text-[#17212B] leading-relaxed">
+            {article.body
+              .replace(/^#{1,6}\s*/gm, "")
+              .replace(/\*\*/g, "")
+              .split(/\n\n+/)
+              .map((block, idx) => {
+                const trimmed = block.trim();
+                const isSubheading =
+                  !trimmed.includes("\n") &&
+                  trimmed.length < 52 &&
+                  !trimmed.endsWith("다.") &&
+                  !trimmed.endsWith("요.");
+
+                if (isSubheading) {
+                  return (
+                    <h2
+                      key={idx}
+                      className="text-xl font-bold text-[#17212B] pt-3"
+                    >
+                      {trimmed}
+                    </h2>
+                  );
+                }
+
+                return (
+                  <p key={idx} className="whitespace-pre-line leading-relaxed">
+                    {trimmed}
+                  </p>
+                );
+              })}
           </div>
 
-          <div className="space-y-5 text-base text-[#17212B] leading-relaxed whitespace-pre-line">
-            {article.body}
-          </div>
+          {article.slug === "space-stowaway-project-why-we-chose-voyage" && (
+            <div className="rounded-xl bg-[#0B2340] text-white p-6 sm:p-8 border border-[#123454] flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#2998D6]">
+                  SPACE STOWAWAY PROJECT
+                </p>
+                <h2 className="text-lg sm:text-xl font-bold text-white">
+                  후크인터스텔라 우주밀항 프로젝트 상세 보기
+                </h2>
+                <p className="text-xs sm:text-sm text-[#D9E6F2]/80">
+                  초소형 캡슐 실험 구상과 운영 원칙, 항해 일지 구조를 확인해 보세요.
+                </p>
+              </div>
+              <Link
+                href="/projects/space-stowaway"
+                className="px-5 py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold transition-colors inline-flex items-center gap-2 shrink-0 min-h-[44px]"
+              >
+                <span>프로젝트 상세 페이지</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Link>
+            </div>
+          )}
 
           {article.sourceLinks && article.sourceLinks.length > 0 && (
             <div className="pt-6 border-t border-[#E5EAF0] space-y-2">
               <h2 className="text-xs font-bold uppercase tracking-wider text-[#5D6B78]">
-                참고 자료 및 출처 (Sources & References)
+                관련 페이지 및 참고 자료
               </h2>
               <ul className="space-y-1.5 text-sm">
                 {article.sourceLinks.map((src, i) => (
                   <li key={i}>
-                    <a
-                      href={src.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-[#147FC5] hover:underline"
-                    >
-                      <span>{src.label}</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    {src.url.startsWith("/") ? (
+                      <Link
+                        href={src.url}
+                        className="inline-flex items-center gap-1.5 font-semibold text-[#147FC5] hover:underline"
+                      >
+                        <span>{src.label}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    ) : (
+                      <a
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-[#147FC5] hover:underline"
+                      >
+                        <span>{src.label}</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

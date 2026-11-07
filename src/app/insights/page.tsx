@@ -157,9 +157,11 @@ export default function InsightsPage() {
                     <h2 className="text-xl font-bold text-[#17212B] group-hover:text-[#147FC5] transition-colors leading-snug">
                       {art.title}
                     </h2>
-                    <p className="text-sm text-[#5D6B78] leading-relaxed">
-                      {art.excerpt}
-                    </p>
+                    {art.excerpt && (
+                      <p className="text-sm text-[#5D6B78] leading-relaxed">
+                        {art.excerpt}
+                      </p>
+                    )}
                   </div>
 
                   <div className="pt-4 border-t border-[#E5EAF0] flex items-center justify-between text-xs text-[#5D6B78]">
