@@ -758,7 +758,7 @@ export default function SpaceStowawayProjectPage() {
                 className="px-5 py-3 rounded-lg border border-[#123454] bg-[#0B2340] hover:border-[#2998D6] text-[#D9E6F2] hover:text-white text-sm font-semibold transition-colors min-h-[44px] inline-flex items-center gap-2"
               >
                 <BookOpen className="w-4 h-4 text-[#2998D6]" aria-hidden="true" />
-                <span>전자책 소개 아티클 읽기</span>
+                <span>인사이트 아티클 보기</span>
               </Link>
             </div>
           </div>

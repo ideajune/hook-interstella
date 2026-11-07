@@ -279,7 +279,7 @@ export default function HomePage() {
                   href="/insights/space-stowaway-project-why-we-chose-voyage"
                   className="px-5 py-3.5 rounded-lg border border-[#D9E6F2]/30 hover:bg-white/10 text-[#D9E6F2] hover:text-white font-semibold text-sm transition-colors inline-flex items-center gap-2 min-h-[48px]"
                 >
-                  <span>전자책 소개 아티클 보기</span>
+                  <span>인사이트 아티클 보기</span>
                 </Link>
               </div>
             </div>
