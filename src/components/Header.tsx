@@ -14,12 +14,9 @@ interface HeaderUser {
 
 const NAV_ITEMS = [
   { label: "ABOUT", href: "/about" },
-  { label: "BUSINESS", href: "/business" },
-  { label: "TECHNOLOGY", href: "/technology" },
-  { label: "ECOSYSTEM", href: "/ecosystem" },
+  { label: "BUSINESS & TECH", href: "/business" },
   { label: "INSIGHTS", href: "/insights" },
   { label: "SPACE IDEAS", href: "/space-ideas", accent: true },
-  { label: "PARTNERSHIP", href: "/partnership" },
   { label: "CONTACT", href: "/contact", isCta: true },
 ];
 
@@ -64,7 +61,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
           : "bg-[#07182D] border-[#123454] text-white"
       }`}
     >
-      <div className="container-shell flex items-center justify-between h-20">
+      <div className="container-shell flex items-center justify-between h-18">
         {/* Brand Logo */}
         <Link
           href="/"
@@ -82,7 +79,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
         {/* Desktop Navigation */}
         <nav
           aria-label="주요 메뉴"
-          className="hidden xl:flex items-center gap-1"
+          className="hidden lg:flex items-center gap-1.5"
         >
           {NAV_ITEMS.map((item) => {
             const isActive =
@@ -93,7 +90,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`ml-2 px-4 py-2.5 rounded-lg text-xs font-semibold tracking-wider transition-colors min-h-[44px] inline-flex items-center ${
+                  className={`ml-2 px-4 py-2 rounded-lg text-xs font-semibold tracking-wider transition-colors min-h-[40px] inline-flex items-center ${
                     isActive
                       ? "bg-[#2998D6] text-white ring-2 ring-white"
                       : "bg-[#147FC5] hover:bg-[#2998D6] text-white"
@@ -109,7 +106,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
                 key={item.href}
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
-                className={`relative px-3 py-2.5 text-xs font-semibold tracking-wider transition-colors min-h-[44px] inline-flex items-center gap-1 rounded-md ${
+                className={`relative px-3.5 py-2 text-xs font-semibold tracking-wider transition-colors min-h-[40px] inline-flex items-center gap-1 rounded-md ${
                   isActive
                     ? "text-white bg-[#123454]"
                     : item.accent
@@ -136,11 +133,11 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
         </nav>
 
         {/* Auth & Admin Controls (Desktop) */}
-        <div className="hidden xl:flex items-center gap-2 border-l border-[#123454] pl-4">
+        <div className="hidden lg:flex items-center gap-2 border-l border-[#123454] pl-4">
           {isStaff && (
             <Link
               href="/admin"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold bg-[#123454] text-[#D9E6F2] hover:text-white hover:bg-[#147FC5] transition-colors min-h-[40px]"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-semibold bg-[#123454] text-[#D9E6F2] hover:text-white hover:bg-[#147FC5] transition-colors min-h-[38px]"
             >
               <Shield className="w-3.5 h-3.5 text-[#2998D6]" aria-hidden="true" />
               <span>ADMIN</span>
@@ -155,7 +152,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="p-2 text-xs text-[#D9E6F2]/80 hover:text-white rounded-md hover:bg-[#123454] min-h-[40px] min-w-[40px] inline-flex items-center justify-center"
+                className="p-2 text-xs text-[#D9E6F2]/80 hover:text-white rounded-md hover:bg-[#123454] min-h-[38px] min-w-[38px] inline-flex items-center justify-center"
                 title="로그아웃"
                 aria-label="로그아웃"
               >
@@ -165,9 +162,9 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
           ) : (
             <Link
               href="/login"
-              className="px-3 py-2 rounded-md text-xs font-semibold text-[#D9E6F2] hover:text-white border border-[#123454] hover:border-[#2998D6] transition-colors min-h-[40px] inline-flex items-center"
+              className="px-3 py-2 rounded-md text-xs font-semibold text-[#D9E6F2] hover:text-white border border-[#123454] hover:border-[#2998D6] transition-colors min-h-[38px] inline-flex items-center"
             >
-              로그인 / 회원가입
+              로그인
             </Link>
           )}
         </div>
@@ -176,7 +173,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
         <button
           type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="xl:hidden p-2.5 rounded-lg text-[#D9E6F2] hover:text-white hover:bg-[#123454] min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
+          className="lg:hidden p-2.5 rounded-lg text-[#D9E6F2] hover:text-white hover:bg-[#123454] min-w-[44px] min-h-[44px] inline-flex items-center justify-center"
           aria-expanded={mobileOpen}
           aria-label={mobileOpen ? "메뉴 닫기" : "메뉴 열기"}
         >
@@ -186,7 +183,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="xl:hidden bg-[#07182D] border-t border-[#123454] px-5 pt-4 pb-6 space-y-3">
+        <div className="lg:hidden bg-[#07182D] border-t border-[#123454] px-5 pt-4 pb-6 space-y-3">
           <nav aria-label="모바일 메뉴" className="grid grid-cols-1 gap-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive =
@@ -215,9 +212,7 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
             {user ? (
               <>
                 <div className="text-xs text-[#D9E6F2]">
-                  접속 계정:{" "}
-                  <strong className="text-white">{user.displayName}</strong> (
-                  {user.role === "admin" ? "총괄 관리자" : "일반 회원"})
+                  접속 계정: <strong className="text-white">{user.displayName}</strong>
                 </div>
                 <div className="flex items-center gap-2">
                   {isStaff && (
