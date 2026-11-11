@@ -115,6 +115,11 @@ export interface Idea {
   title: string;
   description: string;
   attachmentName?: string;
+  stampId?: string;
+  stampHash?: string;
+  parentIdeaId?: string;
+  genesisIdeaId?: string;
+  chainDepth?: number;
   moderationStatus: IdeaModerationStatus;
   moderationReason?: string;
   termsVersion: string;

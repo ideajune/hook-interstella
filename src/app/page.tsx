@@ -1,6 +1,7 @@
-﻿import React from "react";
+import React from "react";
 import Link from "next/link";
 import { readDb } from "@/lib/db";
+import { enrichIdeasWithHooksum } from "@/lib/hooksum";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
   ArrowRight,
@@ -10,7 +11,7 @@ import {
   Lightbulb,
   Globe2,
   BookOpen,
-  MessageSquarePlus,
+  Fingerprint,
   Handshake,
 } from "lucide-react";
 
@@ -21,7 +22,7 @@ export default function HomePage() {
   const businessGroups = [...db.businessGroups].sort(
     (a, b) => a.displayOrder - b.displayOrder
   );
-  const publicIdeas = db.ideas
+  const publicIdeas = enrichIdeasWithHooksum(db.ideas)
     .filter((i) => i.moderationStatus === "published")
     .slice(0, 2);
   const recentArticles = db.articles
@@ -114,7 +115,7 @@ export default function HomePage() {
                   border: "1px solid rgba(255, 255, 255, 0.5)",
                 }}
               >
-                <span>우주 아이디어 광장</span>
+                <span>우주 아이디어 박제소</span>
               </Link>
             </div>
           </div>
@@ -127,7 +128,7 @@ export default function HomePage() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div className="max-w-2xl space-y-2.5">
               <p className="text-xs font-semibold uppercase tracking-widest text-[#147FC5]">
-                VISION & 5 CORE BUSINESS AREAS
+                VISION &amp; 5 CORE BUSINESS AREAS
               </p>
               <h2 className="text-2xl sm:text-3xl font-bold text-[#17212B] leading-snug">
                 거대 자본의 독점을 넘어, 유연한 기술과 열린 연대로 우주를 엽니다
@@ -287,11 +288,11 @@ export default function HomePage() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#147FC5]">
-                  <MessageSquarePlus className="w-4 h-4" />
-                  <span>SPACE IDEAS</span>
+                  <Fingerprint className="w-4 h-4" />
+                  <span>SPACE IDEAS · HOOKSUM</span>
                 </div>
                 <h2 className="text-2xl font-bold text-[#17212B]">
-                  우주 아이디어 광장
+                  우주 아이디어 박제소 &amp; 훅체인
                 </h2>
               </div>
               <Link
@@ -310,9 +311,16 @@ export default function HomePage() {
                   className="block bg-white rounded-xl p-5 border border-[#E5EAF0] hover:border-[#147FC5] transition-colors space-y-2"
                 >
                   <div className="flex items-center justify-between text-xs text-[#5D6B78]">
-                    <span className="px-2 py-0.5 rounded-full bg-[#E8F4FC] text-[#147FC5] font-semibold">
-                      {idea.category}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {idea.postType === "idea" && idea.stampId && (
+                        <span className="px-2 py-0.5 rounded bg-[#07182D] text-[#5CC3FF] font-mono font-bold">
+                          {idea.stampId}
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded-full bg-[#E8F4FC] text-[#147FC5] font-semibold">
+                        {idea.category}
+                      </span>
+                    </div>
                     <span>{idea.createdAt.slice(0, 10)}</span>
                   </div>
                   <h3 className="text-base font-bold text-[#17212B] line-clamp-1">
@@ -335,7 +343,7 @@ export default function HomePage() {
                   <span>INSIGHTS</span>
                 </div>
                 <h2 className="text-2xl font-bold text-[#17212B]">
-                  최신 인사이트 & 리포트
+                  최신 인사이트 &amp; 리포트
                 </h2>
               </div>
               <Link
@@ -381,7 +389,7 @@ export default function HomePage() {
             <div className="space-y-2 max-w-xl">
               <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#2998D6]">
                 <Handshake className="w-4 h-4" />
-                <span>CONTACT & PARTNERSHIP</span>
+                <span>CONTACT &amp; PARTNERSHIP</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold">
                 기술 연구, 생존 솔루션, 교육·콘텐츠 협력을 기다립니다
@@ -403,4 +411,3 @@ export default function HomePage() {
     </div>
   );
 }
-

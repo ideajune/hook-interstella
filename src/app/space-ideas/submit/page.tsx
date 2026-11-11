@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { IdeaCategory } from "@/lib/types";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Idea, IdeaCategory } from "@/lib/types";
 import {
   AlertTriangle,
   ArrowLeft,
+  Award,
   CheckCircle2,
+  Fingerprint,
+  GitBranch,
   Lock,
   ShieldCheck,
+  X,
 } from "lucide-react";
 
 const CATEGORIES: IdeaCategory[] = [
@@ -22,8 +26,11 @@ const CATEGORIES: IdeaCategory[] = [
   "기타",
 ];
 
-export default function SubmitIdeaPage() {
+function SubmitIdeaForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const parentIdParam = searchParams.get("parentId");
+
   const [user, setUser] = useState<{
     id: string;
     displayName: string;
@@ -32,19 +39,21 @@ export default function SubmitIdeaPage() {
   } | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
 
+  const [parentIdea, setParentIdea] = useState<Idea | null>(null);
   const [postType, setPostType] = useState<"idea" | "discussion">("idea");
   const [category, setCategory] = useState<IdeaCategory>("우주 기술");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [attachmentName, setAttachmentName] = useState("");
-  const [displayMode, setDisplayMode] = useState<"public" | "anonymous">("public");
+  const [displayMode, setDisplayMode] = useState<"public" | "anonymous">(
+    "public"
+  );
   const [agreeRequiredTerms, setAgreeRequiredTerms] = useState(false);
   const [followUpConsent, setFollowUpConsent] = useState(false);
 
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submittedIdeaId, setSubmittedIdeaId] = useState<string | null>(null);
-  const [submittedStatus, setSubmittedStatus] = useState<string>("");
+  const [submittedIdea, setSubmittedIdea] = useState<Idea | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -55,6 +64,23 @@ export default function SubmitIdeaPage() {
       })
       .catch(() => setAuthChecking(false));
   }, []);
+
+  useEffect(() => {
+    if (!parentIdParam) {
+      setParentIdea(null);
+      return;
+    }
+    fetch(`/api/space-ideas/${parentIdParam}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.idea && data.idea.postType === "idea") {
+          setParentIdea(data.idea);
+          setPostType("idea");
+          setCategory(data.idea.category);
+        }
+      })
+      .catch(() => setParentIdea(null));
+  }, [parentIdParam]);
 
   const handleQuickDemoLogin = async () => {
     const res = await fetch("/api/auth/login", {
@@ -77,7 +103,7 @@ export default function SubmitIdeaPage() {
     setError("");
 
     if (!user) {
-      setError("아이디어 등록을 위해 먼저 로그인해 주세요.");
+      setError("아이디어 박제 및 등록을 위해 먼저 로그인해 주세요.");
       return;
     }
     if (title.trim().length < 5) {
@@ -85,11 +111,15 @@ export default function SubmitIdeaPage() {
       return;
     }
     if (description.trim().length < 20) {
-      setError("아이디어 또는 질문 내용을 20자 이상 구체적으로 작성해 주세요.");
+      setError(
+        "아이디어 또는 질문 내용을 20자 이상 구체적으로 작성해 주세요."
+      );
       return;
     }
     if (!agreeRequiredTerms) {
-      setError("커뮤니티 운영규칙, 지식재산권(IP) 고지 및 개인정보 수집·이용에 동의해 주세요.");
+      setError(
+        "안티-특허(선행기술 박제) 원칙, 지식재산권(IP) 고지 및 개인정보 수집·이용에 동의해 주세요."
+      );
       return;
     }
 
@@ -99,7 +129,8 @@ export default function SubmitIdeaPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          postType,
+          postType: parentIdea ? "idea" : postType,
+          parentIdeaId: parentIdea ? parentIdea.id : undefined,
           category,
           title: title.trim(),
           description: description.trim(),
@@ -111,10 +142,9 @@ export default function SubmitIdeaPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "등록 중 오류가 발생했습니다.");
+        setError(data.error || "박제 처리 중 오류가 발생했습니다.");
       } else {
-        setSubmittedIdeaId(data.idea.id);
-        setSubmittedStatus(data.idea.moderationStatus);
+        setSubmittedIdea(data.idea);
       }
     } catch {
       setError("서버와 통신 중 오류가 발생했습니다.");
@@ -123,7 +153,8 @@ export default function SubmitIdeaPage() {
     }
   };
 
-  if (submittedIdeaId) {
+  if (submittedIdea) {
+    const isStampedIdea = submittedIdea.postType === "idea";
     return (
       <div className="py-20 bg-[#F8FAFC] min-h-[70vh]">
         <div className="container-shell max-w-2xl">
@@ -131,22 +162,62 @@ export default function SubmitIdeaPage() {
             <div className="w-14 h-14 rounded-full bg-[#E8F4FC] text-[#147FC5] flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#17212B]">
-              아이디어가 성공적으로 등록되었습니다
-            </h1>
-            <p className="text-sm sm:text-base text-[#5D6B78] leading-relaxed">
-              등록하신 게시물의 현재 상태는{" "}
-              <strong className="text-[#147FC5]">
-                {submittedStatus === "published" ? "공개 승인됨 (Published)" : "검토 대기 중 (Pending Review)"}
-              </strong>
-              입니다. 작성하신 아이디어의 지식재산권은 작성자 본인에게 유지됩니다.
-            </p>
-            <div className="pt-4 flex flex-wrap justify-center gap-3">
+
+            <div className="space-y-2">
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#17212B]">
+                {isStampedIdea
+                  ? "아이디어 선행기술 박제가 완료되었습니다"
+                  : "오픈 토론 주제가 등록되었습니다"}
+              </h1>
+              <p className="text-sm sm:text-base text-[#5D6B78] leading-relaxed">
+                현재 상태:{" "}
+                <strong className="text-[#147FC5]">
+                  {submittedIdea.moderationStatus === "published"
+                    ? "공개 박제 완료 (Published Prior Art)"
+                    : "검토 대기 중 (Pending Review)"}
+                </strong>
+              </p>
+            </div>
+
+            {isStampedIdea && submittedIdea.stampId && (
+              <div className="rounded-xl bg-[#07182D] text-white p-5 text-left space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-bold text-[#5CC3FF] inline-flex items-center gap-1.5">
+                    <Fingerprint className="w-4 h-4" />
+                    발급된 박제 번호
+                  </span>
+                  <span className="font-mono font-bold text-sm text-[#5CC3FF]">
+                    {submittedIdea.stampId}
+                  </span>
+                </div>
+                {submittedIdea.stampHash && (
+                  <div className="pt-2 border-t border-[#123454]">
+                    <p className="text-[11px] text-[#D9E6F2]/75">
+                      SHA-256 디지털 인감
+                    </p>
+                    <p className="font-mono text-xs text-[#D9E6F2] break-all mt-0.5">
+                      {submittedIdea.stampHash}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="pt-3 flex flex-wrap justify-center gap-3">
+              {isStampedIdea && (
+                <Link
+                  href={`/space-ideas/${submittedIdea.id}?cert=1`}
+                  className="px-6 py-3 rounded-lg bg-[#07182D] hover:bg-[#0B2340] text-white text-sm font-semibold inline-flex items-center gap-2"
+                >
+                  <Award className="w-4 h-4 text-[#5CC3FF]" />
+                  <span>원작자 명예 증명서 발급·출력</span>
+                </Link>
+              )}
               <Link
-                href={`/space-ideas/${submittedIdeaId}`}
+                href={`/space-ideas/${submittedIdea.id}`}
                 className="px-6 py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold"
               >
-                등록한 게시물 확인하기
+                박제 게시물 확인하기
               </Link>
               <Link
                 href="/space-ideas"
@@ -173,34 +244,71 @@ export default function SubmitIdeaPage() {
             <span>SPACE IDEAS 목록으로 돌아가기</span>
           </Link>
           <h1 className="text-3xl font-bold text-[#17212B] mt-3">
-            우주 아이디어 및 토론 주제 등록
+            {parentIdea
+              ? "훅체인(Hook Chain) 파생 아이디어 연결 박제"
+              : "우주 아이디어 선행기술 박제 및 토론 등록"}
           </h1>
           <p className="text-sm text-[#5D6B78] mt-1">
-            우주 기술, 생존, 식량, 주거, 교육에 관한 참신한 구상이나 질문을 공유해 주세요.
+            아이디어를 먼저 세상에 박제(Stamping)하여 선행기술 지위를 확보하고,
+            원작자의 명예와 창작 족보를 기록하세요.
           </p>
         </div>
 
-        {/* IP & Patent Novelty Warning Box */}
+        {/* Parent Hook Chain Banner */}
+        {parentIdea && (
+          <div className="rounded-xl bg-indigo-950 text-white p-5 space-y-2 border border-indigo-700">
+            <div className="flex items-center justify-between gap-2">
+              <div className="inline-flex items-center gap-2 text-xs font-bold text-indigo-300">
+                <GitBranch className="w-4 h-4" />
+                <span>
+                  HOOK CHAIN 연결 모드 · {(parentIdea.chainDepth ?? 1) + 1}차 파생
+                  훅으로 기록됩니다
+                </span>
+              </div>
+              <Link
+                href="/space-ideas/submit"
+                className="text-xs text-indigo-300 hover:text-white inline-flex items-center gap-1"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>연결 해제 (새 제네시스 훅 작성)</span>
+              </Link>
+            </div>
+            <p className="text-sm font-bold text-white">
+              상위 아이디어:{" "}
+              <span className="text-[#5CC3FF] font-mono">
+                [{parentIdea.stampId || parentIdea.id}]
+              </span>{" "}
+              {parentIdea.title}
+            </p>
+          </div>
+        )}
+
+        {/* Hooksum Defensive Publication & IP Notice Box */}
         <div className="rounded-xl bg-white border border-[#147FC5]/30 p-6 space-y-3">
           <div className="flex items-center gap-2 text-sm font-bold text-[#0B2340]">
             <ShieldCheck className="w-5 h-5 text-[#147FC5]" />
-            <span>지식재산권(IP) 보호 및 공개 게시 필수 안내</span>
+            <span>훅섬(Hooksum) 방어적 공개 및 지식재산권(IP) 안내</span>
           </div>
           <ul className="space-y-1.5 text-xs sm:text-sm text-[#5D6B78] list-disc pl-5 leading-relaxed">
             <li>
-              <strong>아이디어 소유권 불이전:</strong> 본 게시판에 게시물을 등록하더라도
-              아이디어의 소유권이나 지식재산권이 HOOK INTERSTELLAR로 자동 이전되지 않습니다.
+              <strong>선행기술 박제(Prior Art) 효력:</strong> 본 플랫폼에 공개 등록된
+              아이디어는 타임스탬프와 SHA-256 해시가 기록되어 선행기술이 되며, 제3자가
+              동일 기술로 부당하게 독점 특허를 등록하는 것을 방어합니다.
             </li>
             <li>
-              <strong>별도 계약 전제:</strong> 향후 당사가 귀하의 아이디어를 사업화하거나
-              공동개발하고자 할 경우, 별도의 명시적 동의와 서면 계약을 체결합니다.
+              <strong>원작자 권리 유지 및 별도 계약:</strong> 등록된 아이디어의 권리와
+              원작자 명예는 작성자에게 유지되며, 후크인터스텔라가 공동개발·사업화를
+              추진할 경우 별도 서면 계약을 체결합니다.
             </li>
             <li className="text-amber-900 font-medium">
               <AlertTriangle className="w-4 h-4 inline mr-1 text-amber-600" />
-              <strong>특허 출원 유의 및 비밀 미보장:</strong> 공개 게시판 등록 내용은
-              비밀유지계약(NDA) 보호 대상이 아니며 대중에게 공개됩니다. 특허 출원을
-              준비 중인 핵심 기술 상세는 공개 전 변리사 등 전문가의 검토를 받으시길
-              권장합니다.
+              <strong>독점 특허 출원 예정 기술 유의:</strong> 공개 박제는 &lsquo;독점
+              방지(공유)&rsquo; 전략입니다. 작성자 본인이 직접 독점 특허를 출원하려는
+              핵심 기밀은 이곳에 공개하지 마시고{" "}
+              <Link href="/contact" className="underline font-bold">
+                비공개 협력 문의
+              </Link>
+              를 이용해 주세요.
             </li>
           </ul>
         </div>
@@ -211,11 +319,11 @@ export default function SubmitIdeaPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm font-bold text-[#2998D6]">
                 <Lock className="w-4 h-4" />
-                <span>회원 인증 필요 (Member Authentication Required)</span>
+                <span>회원 인증 필요 (원작자 명예 증명 확인)</span>
               </div>
               <p className="text-xs text-[#D9E6F2]/85">
-                건전한 커뮤니티 운영과 작성자 권리 확인을 위해 로그인 후 게시물을
-                작성할 수 있습니다.
+                박제 고유 번호 및 원작자 명예 증명서 발급을 위해 로그인 후 작성할 수
+                있습니다.
               </p>
             </div>
             <div className="flex flex-wrap gap-2 shrink-0">
@@ -230,7 +338,7 @@ export default function SubmitIdeaPage() {
                 href="/login"
                 className="px-4 py-2.5 rounded-lg border border-[#D9E6F2]/30 text-white text-xs font-semibold"
               >
-                로그인 / 회원가입 페이지
+                로그인 / 회원가입
               </Link>
             </div>
           </div>
@@ -257,18 +365,21 @@ export default function SubmitIdeaPage() {
                 htmlFor="postType"
                 className="block text-xs font-bold text-[#17212B] mb-2"
               >
-                게시물 유형 <span className="text-red-600">*</span>
+                등록 유형 <span className="text-red-600">*</span>
               </label>
               <select
                 id="postType"
-                value={postType}
+                value={parentIdea ? "idea" : postType}
+                disabled={Boolean(parentIdea)}
                 onChange={(e) =>
                   setPostType(e.target.value as "idea" | "discussion")
                 }
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm text-[#17212B] bg-white"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm text-[#17212B] bg-white disabled:bg-slate-100"
               >
-                <option value="idea">IDEA BOARD (우주 아이디어 제안)</option>
-                <option value="discussion">DISCUSSION (질문 및 토론 주제)</option>
+                <option value="idea">
+                  박제 아이디어 (타임스탬프 · 명예증명서 발급)
+                </option>
+                <option value="discussion">오픈 토론 (질문 및 자유 의견)</option>
               </select>
             </div>
 
@@ -277,7 +388,7 @@ export default function SubmitIdeaPage() {
                 htmlFor="category"
                 className="block text-xs font-bold text-[#17212B] mb-2"
               >
-                카테고리 분류 <span className="text-red-600">*</span>
+                기술·주제 분야 <span className="text-red-600">*</span>
               </label>
               <select
                 id="category"
@@ -307,7 +418,11 @@ export default function SubmitIdeaPage() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="예: 성층권 실험 탑재체의 극저온 배터리 보온을 위한 경량 케이스 구상"
+              placeholder={
+                parentIdea
+                  ? "상위 아이디어를 어떻게 개선·발전시켰는지 명확히 드러나는 제목을 입력하세요"
+                  : "예: 성층권 실험 탑재체의 극저온 배터리 보온을 위한 경량 케이스 구상"
+              }
               className="w-full px-4 py-2.5 rounded-lg border border-[#E5EAF0] text-sm text-[#17212B]"
             />
           </div>
@@ -317,7 +432,8 @@ export default function SubmitIdeaPage() {
               htmlFor="description"
               className="block text-xs font-bold text-[#17212B] mb-2"
             >
-              상세 내용 및 제안 배경 (20자 이상) <span className="text-red-600">*</span>
+              상세 내용 및 핵심 구성 (20자 이상){" "}
+              <span className="text-red-600">*</span>
             </label>
             <textarea
               id="description"
@@ -325,7 +441,7 @@ export default function SubmitIdeaPage() {
               required
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="해결하고자 하는 문제, 아이디어의 핵심 개념, 다른 참여자들과 함께 토론하고 싶은 질문을 작성해 주세요. (특허 출원 전인 비공개 핵심 수치나 도면은 제외하고 작성해 주세요)"
+              placeholder="해결하고자 하는 문제, 작동 원리, 기존 방식과의 차별점을 구체적으로 기술할수록 선행기술(Prior Art)로서의 방어력이 강력해집니다."
               className="w-full px-4 py-3 rounded-lg border border-[#E5EAF0] text-sm text-[#17212B] leading-relaxed"
             />
           </div>
@@ -336,7 +452,7 @@ export default function SubmitIdeaPage() {
                 htmlFor="displayMode"
                 className="block text-xs font-bold text-[#17212B] mb-2"
               >
-                작성자 공개 표기 방식 <span className="text-red-600">*</span>
+                원작자 표기 방식 <span className="text-red-600">*</span>
               </label>
               <select
                 id="displayMode"
@@ -347,7 +463,7 @@ export default function SubmitIdeaPage() {
                 className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm text-[#17212B] bg-white"
               >
                 <option value="public">
-                  계정 표시 이름 공개 ({user ? user.displayName : "회원 이름"})
+                  실명/닉네임 공개 ({user ? user.displayName : "회원 이름"} — 명예 증명서 표기)
                 </option>
                 <option value="anonymous">
                   익명 표시 (외부에는 ‘익명 참여자’로 표기, 내부 계정 보호)
@@ -360,7 +476,7 @@ export default function SubmitIdeaPage() {
                 htmlFor="attachmentName"
                 className="block text-xs font-bold text-[#17212B] mb-2"
               >
-                참고 자료명 또는 첨부파일 설명 (선택)
+                참고 도면·문서명 표기 (선택)
               </label>
               <input
                 id="attachmentName"
@@ -373,7 +489,7 @@ export default function SubmitIdeaPage() {
             </div>
           </div>
 
-          {/* Separated Required & Optional Consents (PRD 6.8) */}
+          {/* Consents */}
           <div className="pt-4 border-t border-[#E5EAF0] space-y-3">
             <label className="flex items-start gap-3 cursor-pointer">
               <input
@@ -383,13 +499,14 @@ export default function SubmitIdeaPage() {
                 className="mt-1 w-4 h-4 accent-[#147FC5]"
               />
               <span className="text-xs sm:text-sm text-[#17212B] leading-relaxed">
-                <strong>[필수]</strong> 본 게시물이 공개 게시판에 게시됨을 이해하며,{" "}
+                <strong>[필수]</strong> 본 게시물이 공개 박제되어 선행기술(Prior
+                Art)로 공지됨을 이해하며,{" "}
                 <Link
                   href="/community-rules"
                   target="_blank"
                   className="text-[#147FC5] underline"
                 >
-                  커뮤니티 및 지식재산권(IP) 운영원칙
+                  안티-특허 및 지식재산권(IP) 운영원칙
                 </Link>{" "}
                 및{" "}
                 <Link
@@ -399,7 +516,7 @@ export default function SubmitIdeaPage() {
                 >
                   개인정보 수집·이용 안내
                 </Link>
-                에 동의합니다. (약관 버전: v1.0)
+                에 동의합니다. (약관 버전: v1.1)
               </span>
             </label>
 
@@ -411,8 +528,9 @@ export default function SubmitIdeaPage() {
                 className="mt-1 w-4 h-4 accent-[#147FC5]"
               />
               <span className="text-xs sm:text-sm text-[#5D6B78] leading-relaxed">
-                <strong>[선택]</strong> 향후 해당 아이디어와 관련하여 후속 연구 검토나
-                인터뷰, 협업 논의가 필요한 경우 가입된 이메일로 연락받는 것에 동의합니다.
+                <strong>[선택]</strong> 향후 해당 아이디어 또는 훅체인 계보와
+                관련하여 공동 R&amp;D 검토나 협업 제안이 있을 경우 가입 이메일로
+                연락받는 것에 동의합니다.
               </span>
             </label>
           </div>
@@ -429,11 +547,31 @@ export default function SubmitIdeaPage() {
               disabled={submitting || !user}
               className="px-6 py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] disabled:bg-slate-300 text-white text-sm font-semibold transition-colors min-h-[46px]"
             >
-              {submitting ? "등록 처리 중..." : "아이디어 게시하기"}
+              {submitting
+                ? "타임스탬프 박제 중..."
+                : parentIdea
+                ? "훅체인 연결 및 박제하기"
+                : postType === "idea"
+                ? "아이디어 박제하기"
+                : "토론 주제 등록하기"}
             </button>
           </div>
         </form>
       </div>
     </div>
+  );
+}
+
+export default function SubmitIdeaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container-shell py-20 max-w-3xl">
+          <div className="h-64 rounded-2xl bg-slate-100 animate-pulse" />
+        </div>
+      }
+    >
+      <SubmitIdeaForm />
+    </Suspense>
   );
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readDb } from "@/lib/db";
 import { getCurrentUser, hasRole } from "@/lib/auth";
+import { buildHookChainSummary, enrichIdeasWithHooksum } from "@/lib/hooksum";
 
 export async function GET(
   _req: NextRequest,
@@ -11,15 +12,22 @@ export async function GET(
   const user = await getCurrentUser();
   const isStaff = hasRole(user, ["admin"]);
 
-  const idea = db.ideas.find((i) => i.id === id);
+  const enrichedAll = enrichIdeasWithHooksum(db.ideas);
+  const idea = enrichedAll.find((i) => i.id === id);
   if (!idea) {
-    return NextResponse.json({ idea: null, comments: [] }, { status: 404 });
+    return NextResponse.json(
+      { idea: null, comments: [], hookChain: null },
+      { status: 404 }
+    );
   }
 
   // Only allow public to see published; author or staff can see pending
   const isAuthor = user && user.id === idea.authorId;
   if (idea.moderationStatus !== "published" && !isAuthor && !isStaff) {
-    return NextResponse.json({ idea: null, comments: [] }, { status: 404 });
+    return NextResponse.json(
+      { idea: null, comments: [], hookChain: null },
+      { status: 404 }
+    );
   }
 
   const sanitizedIdea = {
@@ -44,5 +52,7 @@ export async function GET(
           : c.authorName,
     }));
 
-  return NextResponse.json({ idea: sanitizedIdea, comments });
+  const hookChain = buildHookChainSummary(enrichedAll, idea, isStaff);
+
+  return NextResponse.json({ idea: sanitizedIdea, comments, hookChain });
 }
