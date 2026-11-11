@@ -1,15 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, UserPlus } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get("mode") === "register" ? "register" : "login";
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
+
+  useEffect(() => {
+    const qMode = searchParams.get("mode");
+    if (qMode === "register" || qMode === "login") {
+      setMode(qMode);
+    }
+  }, [searchParams]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [organization, setOrganization] = useState("");
   const [error, setError] = useState("");
@@ -18,6 +28,18 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (mode === "register") {
+      if (password.length < 6) {
+        setError("비밀번호는 최소 6자 이상이어야 합니다.");
+        return;
+      }
+      if (password !== passwordConfirm) {
+        setError("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -171,10 +193,30 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="비밀번호 입력"
+                placeholder="비밀번호 입력 (6자 이상)"
                 className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
               />
             </div>
+
+            {mode === "register" && (
+              <div>
+                <label
+                  htmlFor="passwordConfirm"
+                  className="block text-xs font-bold text-[#17212B] mb-1.5"
+                >
+                  비밀번호 확인 <span className="text-red-600">*</span>
+                </label>
+                <input
+                  id="passwordConfirm"
+                  type="password"
+                  required
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  placeholder="비밀번호를 다시 한 번 입력해 주세요"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+                />
+              </div>
+            )}
 
             <button
               type="submit"

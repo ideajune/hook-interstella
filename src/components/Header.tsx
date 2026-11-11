@@ -160,12 +160,20 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="px-3 py-2 rounded-md text-xs font-semibold text-[#D9E6F2] hover:text-white border border-[#123454] hover:border-[#2998D6] transition-colors min-h-[38px] inline-flex items-center"
-            >
-              로그인
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login?mode=login"
+                className="px-3 py-2 rounded-md text-xs font-semibold text-[#D9E6F2] hover:text-white border border-[#123454] hover:border-[#2998D6] transition-colors min-h-[38px] inline-flex items-center"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/login?mode=register"
+                className="px-3 py-2 rounded-md text-xs font-semibold text-white bg-[#147FC5] hover:bg-[#2998D6] transition-colors min-h-[38px] inline-flex items-center"
+              >
+                회원가입
+              </Link>
+            </div>
           )}
         </div>
 
@@ -233,12 +241,20 @@ export function Header({ initialUser }: { initialUser: HeaderUser | null }) {
                 </div>
               </>
             ) : (
-              <Link
-                href="/login"
-                className="w-full text-center py-2.5 rounded-lg text-sm font-semibold bg-[#123454] text-white hover:bg-[#147FC5]"
-              >
-                로그인 / 회원가입
-              </Link>
+              <div className="grid grid-cols-2 gap-2 w-full">
+                <Link
+                  href="/login?mode=login"
+                  className="text-center py-2.5 rounded-lg text-sm font-semibold bg-[#123454] text-white hover:bg-[#147FC5]"
+                >
+                  로그인
+                </Link>
+                <Link
+                  href="/login?mode=register"
+                  className="text-center py-2.5 rounded-lg text-sm font-semibold bg-[#147FC5] text-white hover:bg-[#2998D6]"
+                >
+                  회원가입
+                </Link>
+              </div>
             )}
           </div>
         </div>
