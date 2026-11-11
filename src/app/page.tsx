@@ -292,7 +292,7 @@ export default function HomePage() {
                   <span>SPACE IDEAS · HOOKSUM</span>
                 </div>
                 <h2 className="text-2xl font-bold text-[#17212B]">
-                  우주 아이디어 토론광장 (훅섬, Hooksum)
+                  우주 아이디어 토론광장 (Hooksum)
                 </h2>
               </div>
               <Link

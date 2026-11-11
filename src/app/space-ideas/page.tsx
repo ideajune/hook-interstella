@@ -86,7 +86,7 @@ export default function SpaceIdeasPage() {
                 <span>SPACE IDEAS · HOOKSUM ARCHIVE</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold leading-tight">
-                우주 아이디어 토론광장 (훅섬, Hooksum)
+                우주 아이디어 토론광장 (Hooksum)
               </h1>
               <p className="text-sm sm:text-base text-[#D9E6F2]/85 leading-relaxed">
                 &ldquo;가두지 말고 먼저 박제하라.&rdquo; 아이디어를 명확한 시점 증명과
