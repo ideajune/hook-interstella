@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import Link from "next/link";
 import { readDb } from "@/lib/db";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -202,13 +202,11 @@ export default function HomePage() {
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-bold text-white leading-tight">
-                도착보다 중요한 것은 항해다.
+                우주밀항 프로젝트
               </h2>
 
               <p className="text-sm sm:text-base text-[#D9E6F2]/85 leading-relaxed max-w-xl">
-                개인의 존재를 상징하는 초소형 캡슐(모근 포함 머리카락 1올)을 우주로
-                보내기 위한 도전. 발사 기한을 섣불리 약속하는 대신, 성층권 실증부터
-                도달할 때까지 시도를 지속하고 전 과정을 투명하게 기록합니다.
+                &ldquo;도착보다 중요한 것은 항해다.&rdquo; 개인의 존재를 상징하는 초소형 캡슐(모근 포함 머리카락 1올)을 우주로 보내기 위한 도전으로, 발사 기한을 섣불리 약속하는 대신 성층권 실증부터 도달할 때까지 시도를 지속하고 전 과정을 투명하게 기록합니다.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -405,3 +403,4 @@ export default function HomePage() {
     </div>
   );
 }
+
