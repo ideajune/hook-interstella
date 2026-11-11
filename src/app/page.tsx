@@ -115,7 +115,7 @@ export default function HomePage() {
                   border: "1px solid rgba(255, 255, 255, 0.5)",
                 }}
               >
-                <span>우주 아이디어 박제소</span>
+                <span>우주 아이디어 토론광장</span>
               </Link>
             </div>
           </div>
@@ -292,7 +292,7 @@ export default function HomePage() {
                   <span>SPACE IDEAS · HOOKSUM</span>
                 </div>
                 <h2 className="text-2xl font-bold text-[#17212B]">
-                  우주 아이디어 박제소 &amp; 훅체인
+                  우주 아이디어 토론광장 (훅섬, Hooksum)
                 </h2>
               </div>
               <Link

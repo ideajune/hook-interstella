@@ -120,7 +120,7 @@ export default function CommunityRulesPage() {
               href="/space-ideas"
               className="px-5 py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold inline-block"
             >
-              SPACE IDEAS 박제소로 돌아가기
+              우주 아이디어 토론광장으로 돌아가기
             </Link>
             <Link
               href="/space-ideas/submit"
