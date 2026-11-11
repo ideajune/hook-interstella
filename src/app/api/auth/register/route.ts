@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateDb } from "@/lib/db";
 import { SESSION_COOKIE_NAME } from "@/lib/auth";
 import { User } from "@/lib/types";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,6 +55,11 @@ export async function POST(req: NextRequest) {
     if ("error" in result) {
       return NextResponse.json({ error: result.error }, { status: 409 });
     }
+
+    // Send welcome email asynchronously without blocking registration
+    sendWelcomeEmail(result.user.email, result.user.displayName).catch((e) =>
+      console.error("Welcome email error:", e)
+    );
 
     const res = NextResponse.json({
       user: {

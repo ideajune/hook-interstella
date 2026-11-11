@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Lock, UserPlus } from "lucide-react";
+import { Lock, UserPlus, CheckCircle2, ArrowRight } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -24,6 +24,7 @@ function LoginForm() {
   const [organization, setOrganization] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState<{ displayName: string; email: string } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,12 +59,20 @@ function LoginForm() {
       if (!res.ok) {
         setError(data.error || "인증 처리에 실패했습니다.");
       } else {
-        if (data.user?.role === "admin") {
-          router.push("/admin");
+        if (mode === "register") {
+          // Show registration completion modal/view
+          setRegisteredUser({
+            displayName: data.user.displayName,
+            email: data.user.email,
+          });
         } else {
-          router.push("/space-ideas");
+          if (data.user?.role === "admin") {
+            router.push("/admin");
+          } else {
+            router.push("/space-ideas");
+          }
+          router.refresh();
         }
-        router.refresh();
       }
     } catch {
       setError("네트워크 오류가 발생했습니다.");
@@ -72,169 +81,217 @@ function LoginForm() {
     }
   };
 
+  const handleCompleteClose = () => {
+    router.push("/space-ideas");
+    router.refresh();
+  };
+
   return (
-    <div className="bg-white rounded-2xl border border-[#E5EAF0] p-7 sm:p-10 space-y-6 shadow-xs">
-      {/* Tabs */}
-      <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#F8FAFC] border border-[#E5EAF0]">
-        <button
-          type="button"
-          onClick={() => {
-            setMode("login");
-            setError("");
-          }}
-          className={`py-2.5 rounded-lg text-sm font-bold transition-colors ${
-            mode === "login"
-              ? "bg-[#147FC5] text-white"
-              : "text-[#5D6B78] hover:text-[#17212B]"
-          }`}
-        >
-          로그인
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setMode("register");
-            setError("");
-          }}
-          className={`py-2.5 rounded-lg text-sm font-bold transition-colors ${
-            mode === "register"
-              ? "bg-[#147FC5] text-white"
-              : "text-[#5D6B78] hover:text-[#17212B]"
-          }`}
-        >
-          회원가입
-        </button>
-      </div>
-
-      <p className="text-xs sm:text-sm text-[#5D6B78] leading-relaxed">
-        {mode === "login"
-          ? "우주 아이디어 등록 및 커뮤니티 소통을 위해 로그인해 주세요."
-          : "간단한 정보 입력만으로 누구나 우주 아이디어 광장에 참여하실 수 있습니다."}
-      </p>
-
-      {error && (
-        <div
-          role="alert"
-          className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 font-semibold"
-        >
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {mode === "register" && (
-          <>
-            <div>
-              <label
-                htmlFor="displayName"
-                className="block text-xs font-bold text-[#17212B] mb-1.5"
-              >
-                이름 또는 닉네임 <span className="text-red-600">*</span>
-              </label>
-              <input
-                id="displayName"
-                type="text"
-                required
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="예: 우주탐구자 / 홍길동"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="organization"
-                className="block text-xs font-bold text-[#17212B] mb-1.5"
-              >
-                소속 또는 관심 분야 (선택)
-              </label>
-              <input
-                id="organization"
-                type="text"
-                value={organization}
-                onChange={(e) => setOrganization(e.target.value)}
-                placeholder="예: 대학생 / 엔지니어 / 우주 과학 관심"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
-              />
-            </div>
-          </>
-        )}
-
-        <div>
-          <label
-            htmlFor="email"
-            className="block text-xs font-bold text-[#17212B] mb-1.5"
+    <>
+      <div className="bg-white rounded-2xl border border-[#E5EAF0] p-7 sm:p-10 space-y-6 shadow-xs">
+        {/* Tabs */}
+        <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-[#F8FAFC] border border-[#E5EAF0]">
+          <button
+            type="button"
+            onClick={() => {
+              setMode("login");
+              setError("");
+            }}
+            className={`py-2.5 rounded-lg text-sm font-bold transition-colors ${
+              mode === "login"
+                ? "bg-[#147FC5] text-white"
+                : "text-[#5D6B78] hover:text-[#17212B]"
+            }`}
           >
-            이메일 <span className="text-red-600">*</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@example.com"
-            className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
-          />
-        </div>
-
-        <div>
-          <label
-            htmlFor="password"
-            className="block text-xs font-bold text-[#17212B] mb-1.5"
+            로그인
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode("register");
+              setError("");
+            }}
+            className={`py-2.5 rounded-lg text-sm font-bold transition-colors ${
+              mode === "register"
+                ? "bg-[#147FC5] text-white"
+                : "text-[#5D6B78] hover:text-[#17212B]"
+            }`}
           >
-            비밀번호 <span className="text-red-600">*</span>
-          </label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="비밀번호 입력 (6자 이상)"
-            className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
-          />
+            회원가입
+          </button>
         </div>
 
-        {mode === "register" && (
-          <div>
-            <label
-              htmlFor="passwordConfirm"
-              className="block text-xs font-bold text-[#17212B] mb-1.5"
-            >
-              비밀번호 확인 <span className="text-red-600">*</span>
-            </label>
-            <input
-              id="passwordConfirm"
-              type="password"
-              required
-              value={passwordConfirm}
-              onChange={(e) => setPasswordConfirm(e.target.value)}
-              placeholder="비밀번호를 다시 한 번 입력해 주세요"
-              className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
-            />
+        <p className="text-xs sm:text-sm text-[#5D6B78] leading-relaxed">
+          {mode === "login"
+            ? "우주 아이디어 등록 및 커뮤니티 소통을 위해 로그인해 주세요."
+            : "간단한 정보 입력만으로 누구나 우주 아이디어 광장에 참여하실 수 있습니다."}
+        </p>
+
+        {error && (
+          <div
+            role="alert"
+            className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700 font-semibold"
+          >
+            {error}
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold inline-flex items-center justify-center gap-2 min-h-[46px] transition-colors"
-        >
-          {mode === "login" ? (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {mode === "register" && (
             <>
-              <Lock className="w-4 h-4" />
-              <span>로그인</span>
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-4 h-4" />
-              <span>회원가입 완료</span>
+              <div>
+                <label
+                  htmlFor="displayName"
+                  className="block text-xs font-bold text-[#17212B] mb-1.5"
+                >
+                  이름 또는 닉네임 <span className="text-red-600">*</span>
+                </label>
+                <input
+                  id="displayName"
+                  type="text"
+                  required
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="예: 우주탐구자 / 홍길동"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="organization"
+                  className="block text-xs font-bold text-[#17212B] mb-1.5"
+                >
+                  소속 또는 관심 분야 (선택)
+                </label>
+                <input
+                  id="organization"
+                  type="text"
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
+                  placeholder="예: 대학생 / 엔지니어 / 우주 과학 관심"
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+                />
+              </div>
             </>
           )}
-        </button>
-      </form>
-    </div>
+
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-xs font-bold text-[#17212B] mb-1.5"
+            >
+              이메일 <span className="text-red-600">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="email@example.com"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-xs font-bold text-[#17212B] mb-1.5"
+            >
+              비밀번호 <span className="text-red-600">*</span>
+            </label>
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="비밀번호 입력 (6자 이상)"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+            />
+          </div>
+
+          {mode === "register" && (
+            <div>
+              <label
+                htmlFor="passwordConfirm"
+                className="block text-xs font-bold text-[#17212B] mb-1.5"
+              >
+                비밀번호 확인 <span className="text-red-600">*</span>
+              </label>
+              <input
+                id="passwordConfirm"
+                type="password"
+                required
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                placeholder="비밀번호를 다시 한 번 입력해 주세요"
+                className="w-full px-3.5 py-2.5 rounded-lg border border-[#E5EAF0] text-sm"
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold inline-flex items-center justify-center gap-2 min-h-[46px] transition-colors"
+          >
+            {mode === "login" ? (
+              <>
+                <Lock className="w-4 h-4" />
+                <span>{loading ? "로그인 중..." : "로그인"}</span>
+              </>
+            ) : (
+              <>
+                <UserPlus className="w-4 h-4" />
+                <span>{loading ? "가입 처리 중..." : "회원가입 완료"}</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+
+      {/* Registration Success Modal Popup */}
+      {registeredUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl border border-[#E5EAF0] max-w-md w-full p-7 sm:p-8 space-y-5 text-center shadow-xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-[#E8F4FC] text-[#147FC5] flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-9 h-9" />
+            </div>
+
+            <div className="space-y-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#17212B]">
+                회원가입이 완료되었습니다!
+              </h3>
+              <p className="text-sm text-[#5D6B78] leading-relaxed">
+                <strong className="text-[#17212B]">{registeredUser.displayName}</strong>님, 후크인터스텔라의 회원이 되신 것을 환영합니다.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-[#F8FAFC] border border-[#E5EAF0] p-4 text-xs sm:text-sm text-[#5D6B78] space-y-1.5 text-left">
+              <p>
+                ✉️ <strong>가입 확인 메일 발송 안내:</strong>
+              </p>
+              <p className="text-xs text-[#17212B]">
+                <strong>{registeredUser.email}</strong> 주소로 가입 확인 및 환영 안내 메일이 자동 발송되었습니다.
+              </p>
+              <p className="text-[11px] text-[#8C9BA8] pt-1">
+                (메일이 도착하지 않은 경우 스팸 메일함을 확인해 주세요.)
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleCompleteClose}
+              className="w-full py-3 rounded-lg bg-[#147FC5] hover:bg-[#2998D6] text-white text-sm font-semibold inline-flex items-center justify-center gap-2 min-h-[46px] transition-colors"
+            >
+              <span>우주 아이디어 광장 시작하기</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
